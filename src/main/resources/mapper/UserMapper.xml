@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zq.demo.user.dao.UserDao">
+    <select id="getByTel" resultType="User">
+        select *
+        from `USER`
+        where telephone = #{tel}
+    </select>
+
+    <select id="get" resultType="User">
+        select *
+        from `USER`
+        where id = #{id}
+    </select>
+    
+    <insert id="create">
+        insert into `USER`(`id`, `telephone`, `password`)
+        values (#{id}, #{telephone}, #{password})
+    </insert>
+</mapper>
