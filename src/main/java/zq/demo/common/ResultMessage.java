@@ -1,7 +1,9 @@
 package zq.demo.common;
 
-import javax.xml.transform.Result;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResultMessage {
 	
 	private static final Integer SUCCESS_CODE = 0;

@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zq.demo.common.CommonCache;
 import zq.demo.common.ResultMessage;
 import zq.demo.common.UserException;
@@ -28,8 +26,8 @@ public class UserController {
 	@Autowired
 	private CommonCache commonCache;
 	
-	@RequestMapping("/reg")
-	public ResultMessage reg(UserRegRequest request) {
+	@PostMapping("/reg")
+	public ResultMessage reg(@RequestBody UserRegRequest request) {
 		try {
 			validateRegistryParam(request);
 			userService.create(request.getTelephone(), request.getPassword());
@@ -42,7 +40,7 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping("/get/code")
+	@GetMapping("/get/code")
 	public ResultMessage getCode(String telephone) {
 		try {
 			if (StringUtils.isEmpty(telephone)) {
@@ -60,7 +58,7 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping("/login")
+	@PostMapping("/login")
 	public ResultMessage login(@RequestBody User user) {
 		try {
 			validateLoginParam(user);
@@ -87,7 +85,7 @@ public class UserController {
 		if (userService.get(request.getTelephone()) != null) {
 			throw new UserException("该手机号已被注册");
 		}
-		if (!request.getTelephone().equals(commonCache.get(request.getTelephone()))) {
+		if (!request.getCode().equals(commonCache.get(request.getTelephone()))) {
 			throw new UserException("验证码错误");	
 		}
 	}
@@ -99,8 +97,12 @@ public class UserController {
 		if (StringUtils.isEmpty(request.getPassword())) {
 			throw new UserException("密码不得为空");
 		}
-		if (userService.get(request.getTelephone()) == null) {
+		User user = userService.get(request.getTelephone());
+		if (user == null) {
 			throw new UserException("该手机号尚未注册");
+		}
+		if (!user.getPassword().equals(request.getPassword())) {
+			throw new UserException("密码错误");
 		}
 	}
 }
